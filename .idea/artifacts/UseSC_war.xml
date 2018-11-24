@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="UseSC:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="simplecontroller.war">
+      <element id="artifact" artifact-name="UseSC:war exploded" />
+    </root>
+  </artifact>
+</component>
