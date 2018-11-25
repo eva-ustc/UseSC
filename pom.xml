@@ -34,10 +34,30 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
+
+    <!--引入maven本地仓库的自定义jar包-->
     <dependency>
       <groupId>ustc.sse</groupId>
       <artifactId>simple-controller</artifactId>
       <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!--引入Struts2-->
+    <dependency>
+        <groupId>org.apache.struts</groupId>
+        <artifactId>struts2-core</artifactId>
+        <version>2.5.16</version>
+    </dependency>
+    <!--引入hibernate-->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>5.3.7.Final</version>
+    </dependency>
+    <!--添加dom4j依赖-->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
     </dependency>
   </dependencies>
 
