@@ -9,7 +9,7 @@ package ustc.sse.action;
  */
 public class RegisterAction {
 
-    public String handleRegister(){
+    public String handleRegister(String action_name){
         System.out.println("handleRegister...执行了!");
         return "success";
     }

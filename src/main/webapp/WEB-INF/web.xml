@@ -21,7 +21,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>sc2</servlet-name>
-    <servlet-class>ustc.sse.controller.SimpleController2</servlet-class>
+    <servlet-class>ustc.sse.controller.SimpleControllerProxy</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>sc2</servlet-name>

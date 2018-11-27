@@ -4,9 +4,12 @@ import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author LRK
@@ -16,20 +19,20 @@ import java.util.List;
  * @description God Bless, No Bug!
  */
 public class XmlUtils {
-/*
-<sc-configuration>
-    <controller>
-        <action name="login" class="ustc.sse.action.LoginAction" method="handleLogin">
-            <result name="success" type="forward" value="pages/welcome.jsp"/>
-            <result name="failure" type="redirect" value="pages/failure.jsp"/>
-        </action>
-        <action name="register" class="ustc.sse.action.RegisterAction" method="handleRegister">
-            <result name="success" type="forward" value="pages/welcome.jsp"/>
-            <result name="failure" type="redirect" value="pages/failure.jsp"/>
-        </action>
-    </controller>
-</sc-configuration>
- */
+    public static Properties config_prop;
+    public static SimpleDateFormat date_format;
+    static {
+        config_prop = new Properties();
+        try {
+            config_prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("/config.properties"));
+            date_format = new SimpleDateFormat(config_prop.getProperty("date_format"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
     /**
      * 获取action节点的Attribute属性
@@ -102,7 +105,7 @@ public class XmlUtils {
             Element root = document.getRootElement();
             // //name[attr='attrName']
             String sel_str = MessageFormat.format("//{0}[@{1}=''{2}'']", element_name, attr_name, attr_value);
-            System.out.println(sel_str);
+//            System.out.println(sel_str);
             element = (Element) root.selectSingleNode(sel_str);
         } catch (DocumentException e) {
             e.printStackTrace();
@@ -123,6 +126,18 @@ public class XmlUtils {
         }else {
             throw new RuntimeException("传入的元素节点为null!");
         }
-
     }
+   /* public static void handlerResult(String method, HttpServletRequest request, HttpServletResponse response, String type, String value) {
+        try {
+            request.setAttribute("type",type+":"+ method);
+            if ("forward".equals(type)) { // 转发到指定页面
+                request.getRequestDispatcher(value).forward(request, response);
+            } else if ("redirect".equals(type)) { // 重定向到指定页面
+                response.sendRedirect(value);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
 }
