@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sc-configuration>
+    <controller>
+        <action name="login" class="ustc.sse.action.LoginAction" method="handleLogin">
+            <result name="success" type="forward" value="pages/welcome.jsp"/>
+            <result name="failure" type="redirect" value="pages/failure.jsp"/>
+        </action>
+        <action name="register" class="ustc.sse.action.RegisterAction" method="handleRegister">
+            <result name="success" type="forward" value="pages/welcome.jsp"/>
+            <result name="failure" type="redirect" value="pages/failure.jsp"/>
+        </action>
+
+    </controller>
+</sc-configuration>

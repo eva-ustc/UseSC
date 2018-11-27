@@ -17,6 +17,15 @@
 
   <servlet-mapping>
     <servlet-name>sc</servlet-name>
-    <url-pattern>/*.sc</url-pattern>
+    <url-pattern>*.sc</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>sc2</servlet-name>
+    <servlet-class>ustc.sse.controller.SimpleController2</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>sc2</servlet-name>
+    <url-pattern>*.test</url-pattern>
+  </servlet-mapping>
+
 </web-app>
