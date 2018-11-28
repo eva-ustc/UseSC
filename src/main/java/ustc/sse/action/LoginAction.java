@@ -1,7 +1,9 @@
 package ustc.sse.action;
 
 import org.dom4j.Element;
-import ustc.sse.utils.Xml2Html;
+import ustc.sse.domain.User;
+import ustc.sse.service.UserService;
+import ustc.sse.service.impl.UserServiceImpl;
 import utils.XmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +18,19 @@ import java.text.MessageFormat;
  * @description God Bless, No Bug!
  */
 public class LoginAction {
-    public String handleLogin(String action_name){
+
+    private UserService userService = new UserServiceImpl();
+
+    public String handleLogin(String action_name,User user){
         System.out.println("handleLogin...执行了");
-        return "success";
+        /*User user = new User();
+        user.setUserName("eva");
+        user.setUserPass("123");*/
+        if (userService.signIn(user)){
+            return "success";
+        }else {
+            return "failure";
+        }
     }
 
 

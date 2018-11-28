@@ -1,5 +1,7 @@
 package ustc.sse.action;
 
+import ustc.sse.domain.User;
+
 /**
  * @author LRK
  * @project_name UseSC
@@ -9,7 +11,7 @@ package ustc.sse.action;
  */
 public class RegisterAction {
 
-    public String handleRegister(String action_name){
+    public String handleRegister(String action_name,User user){
         System.out.println("handleRegister...执行了!");
         return "success";
     }

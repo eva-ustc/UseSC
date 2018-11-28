@@ -1,8 +1,9 @@
 import org.junit.jupiter.api.Test;
-import ustc.sse.utils.Xml2Html;
+import utils.DBCPUtils;
 import utils.XmlUtils;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -17,5 +18,10 @@ public class XmlTest {
     public void test(){
         File xml_file = new File("C:\\Users\\LRK\\Desktop\\controller.xml");
         List<String> actionName = XmlUtils.getAllAttributes(xml_file,"name");
+    }
+    @Test
+    public void testDBCP(){
+        Connection connection = DBCPUtils.getConnection();
+        System.out.println(connection);
     }
 }

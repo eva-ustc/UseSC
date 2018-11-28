@@ -1,6 +1,7 @@
 package ustc.sse.controller;
 
 import org.dom4j.Element;
+import ustc.sse.domain.User;
 import ustc.sse.proxy.ActionProxy;
 import utils.XmlUtils;
 
@@ -65,10 +66,14 @@ public class SimpleControllerProxy extends HttpServlet {
 
                     Object target = clazz.newInstance();
                     Object proxy = actionProxy.getProxy(target);
-                    // 调用代理对象加强业务方法
-                    Method method = clazz.getDeclaredMethod(method_name,String.class);
 
-                    String result = (String) method.invoke(proxy,action_name);
+                    User user = new User();
+                    user.setUserName(req.getParameter("username"));
+                    user.setUserPass(req.getParameter("password"));
+                    // 调用代理对象加强业务方法
+                    Method method = clazz.getDeclaredMethod(method_name,String.class,User.class);
+
+                    String result = (String) method.invoke(proxy,action_name,user);
                     // 根据方法的返回值,查询次action下的result节点的name属性 跳转/重定向
                     handleResult(action_element, result,method_name,req,resp);
                     /*// 利用反射执行指定方法获取方法返回值
