@@ -9,7 +9,7 @@
     <controller>
         <action name="login" class="ustc.sse.action.LoginAction" method="handleLogin">
             <interceptor-ref name="log"/>
-            <result name="success" type="forward" value="pages/welcome.jsp"/>
+            <result name="success" type="forward" value="pages/success_view.xml"/>
             <result name="failure" type="redirect" value="pages/failure.jsp"/>
         </action>
         <action name="register" class="ustc.sse.action.RegisterAction" method="handleRegister">

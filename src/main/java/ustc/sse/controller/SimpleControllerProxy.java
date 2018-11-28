@@ -74,16 +74,12 @@ public class SimpleControllerProxy extends HttpServlet {
                     /*// 利用反射执行指定方法获取方法返回值
                     result = (String) doMethod(class_name, method_name);
 
-
-
                     if (hasInterceptor){ // 执行afterdo 方法
                         for(Element interceptor_ref_element : interceptor_ref_elements){
-
                             interceptor_name = interceptor_ref_element.attribute("name").getText();
 //                            doInterceptor(interceptor_name,AFTER_EXECUTION);
                         }
                     }*/
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -143,23 +139,45 @@ public class SimpleControllerProxy extends HttpServlet {
         }
     }*/
 
-
+    /**
+     * 根据Action方法的返回值对结果进行处理
+     * @param action_element
+     * @param result
+     * @param method
+     * @param request
+     * @param response
+     */
     private void handleResult(Element action_element, String result,String method,HttpServletRequest request,HttpServletResponse response) {
         String sel_str = MessageFormat.format("result[@name=''{0}'']",result);
 //        System.out.println(sel_str);
+        // 获取result节点
         Element result_element = (Element) action_element.selectSingleNode(sel_str);
+        // 获取result的type value属性
         String type = result_element.attribute("type").getText();
         String value = result_element.attribute("value").getText();
-        try {
-            request.setAttribute("type",type+":"+ method);
-            if ("forward".equals(type)) { // 转发到指定页面
-                request.getRequestDispatcher(value).forward(request, response);
-            } else if ("redirect".equals(type)) { // 重定向到指定页面
-                response.sendRedirect(value);
+
+        if (value.endsWith("_view.xml")) {
+            // 根据xml动态生成客户端html视图
+            try {
+                response.getWriter().write(XmlUtils.ConvertXml2Html("/success_view2.xsl",
+                        "/success_view.xml").toString());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }else {
+
+            try {
+                request.setAttribute("type",type+":"+ method);
+                if ("forward".equals(type)) { // 转发到指定页面
+                    request.getRequestDispatcher(value).forward(request, response);
+                } else if ("redirect".equals(type)) { // 重定向到指定页面
+                    response.sendRedirect(value);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     @Override

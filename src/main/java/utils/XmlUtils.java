@@ -3,6 +3,13 @@ package utils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -32,6 +39,36 @@ public class XmlUtils {
 
     }
 
+    /**
+     * 将XML文件转换成HTML文件字节数组输出流
+     * @param xsl_path xsl文件路径 (在资源文件目录下)
+     * @param xml_path xml文件路径 (在资源文件目录下)
+     * @return HTML字节数组输出流
+     */
+    public static ByteArrayOutputStream ConvertXml2Html(String xsl_path,String xml_path){
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = null;
+        StreamSource source_xsl = new StreamSource(Thread.currentThread()
+                .getContextClassLoader().getResourceAsStream(xsl_path));
+        StreamSource source_xml = new StreamSource(Thread.currentThread()
+                .getContextClassLoader().getResourceAsStream(xml_path));
+        try {
+            transformer = factory.newTransformer(source_xsl);
+            StreamResult output = null;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            output = new StreamResult(baos);
+
+            transformer.transform(source_xml,output);
+            String str = baos.toString();
+            System.out.println(str);
+            return baos;
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     /**

@@ -76,7 +76,7 @@ public class ActionProxy implements MethodInterceptor {
 
             // 执行真正的业务方法
             result_str = methodProxy.invokeSuper(o,objects);
-            Thread.sleep(3000);
+//            Thread.sleep(3000);
 
             // 事后 记录日志
             System.out.println("afterActionProxy...");
