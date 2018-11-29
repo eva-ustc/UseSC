@@ -3,6 +3,8 @@ package ustc.sse.controller;
 import org.dom4j.Element;
 import ustc.sse.domain.User;
 import ustc.sse.proxy.ActionProxy;
+import ustc.sse.service.UserService;
+import ustc.sse.service.impl.UserServiceImpl;
 import utils.XmlUtils;
 
 import javax.servlet.ServletException;
@@ -11,9 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author LRK
@@ -24,30 +29,30 @@ import java.util.List;
  */
 public class SimpleControllerProxy extends HttpServlet {
     private static final String ERROR = "pages/error.jsp";
-    private static final String PRE_EXECUTION = "predo";
-    private static final String AFTER_EXECUTION = "afterdo";
-    private String request_path;
     private String action_name;
     private File controller_xml;
     private List<String> actionNames;
     private boolean hasAction;
-    private boolean hasInterceptor;
-    private String interceptor_name;
-    private String result;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        UserService userService = new UserServiceImpl();
         initParams(req, resp);
+        // 查询所有用户
+        /*if ("users".equals(action_name)){
+            req.setAttribute("users",userService.getUsers());
+            req.getRequestDispatcher("/pages/users.jsp").forward(req,resp);
+        }*/
         for(String actionName : actionNames){
             if (actionName.equals(action_name)){// 匹配成功 name=login,利用反射执行相应操作
                 hasAction =true;
                 //  获取当前action节点
                 Element action_element = XmlUtils.getElementByAttr(controller_xml,"action","name",actionName);
 
-                // 判断是否存在interceptor-ref节点
+/*               // 判断是否存在interceptor-ref节点
                 List<Element> interceptor_ref_elements = action_element.elements("interceptor-ref");
 
-/*                if (interceptor_ref_elements !=null){
+               if (interceptor_ref_elements !=null){
                     hasInterceptor = true;
                     for(Element interceptor_ref_element : interceptor_ref_elements){
 
@@ -67,15 +72,15 @@ public class SimpleControllerProxy extends HttpServlet {
                     Object target = clazz.newInstance();
                     Object proxy = actionProxy.getProxy(target);
 
-                    User user = new User();
-                    user.setUserName(req.getParameter("username"));
-                    user.setUserPass(req.getParameter("password"));
-                    // 调用代理对象加强业务方法
-                    Method method = clazz.getDeclaredMethod(method_name,String.class,User.class);
+                    User user = encapsulateParaUser(req);
+                    // 将request传来的参数封装到user对象中
 
-                    String result = (String) method.invoke(proxy,action_name,user);
+                    // 调用代理对象加强业务方法
+                    Method method = clazz.getDeclaredMethod(method_name,String.class,User.class,HttpServletRequest.class);
+
+                    String result = (String) method.invoke(proxy,action_name,user,req);
                     // 根据方法的返回值,查询次action下的result节点的name属性 跳转/重定向
-                    handleResult(action_element, result,method_name,req,resp);
+                    handleResult(action_element,result,method_name,req,resp);
                     /*// 利用反射执行指定方法获取方法返回值
                     result = (String) doMethod(class_name, method_name);
 
@@ -88,12 +93,35 @@ public class SimpleControllerProxy extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
         }
         if (!hasAction) { // 没有匹配请求的方法
 
             resp.sendRedirect(ERROR);
         }
+    }
+
+    /**
+     * 将request的参数封装到user对象中
+     * @param req
+     * @return
+     */
+    private User encapsulateParaUser(HttpServletRequest req) {
+        User user = new User();
+        String id_str = (req.getParameter("id"));
+        if (id_str != null) {
+            user.setUserId(Integer.parseInt(id_str));
+        }
+        String username = req.getParameter("username");
+        if (username != null) {
+            user.setUserName(username);
+        }
+        String password = req.getParameter("password");
+        if (password != null) {
+            user.setUserPass(password);
+        }
+        return user;
     }
 
 
@@ -118,7 +146,7 @@ public class SimpleControllerProxy extends HttpServlet {
         resp.setCharacterEncoding("gbk"); // 设置response字节编码
 
         // 获取请求路径
-        request_path = req.getServletPath();
+        String request_path = req.getServletPath();
 //        System.out.println(path);
         // 获取请求动作名称 截取 /xxx.sc
         action_name = request_path.substring(request_path.lastIndexOf('/')+1, request_path.lastIndexOf('.'));
@@ -160,18 +188,21 @@ public class SimpleControllerProxy extends HttpServlet {
         // 获取result的type value属性
         String type = result_element.attribute("type").getText();
         String value = result_element.attribute("value").getText();
-
+       /* // 测试是否是一个request 是同一个request
+        System.out.println(request);
+        List<User> users = (List<User>)request.getAttribute("users");
+        System.out.println(users);*/
         if (value.endsWith("_view.xml")) {
             // 根据xml动态生成客户端html视图
             try {
-                response.getWriter().write(XmlUtils.ConvertXml2Html("/success_view2.xsl",
-                        "/success_view.xml").toString());
+                response.getWriter().write(Objects.requireNonNull(XmlUtils.ConvertXml2Html("/success_view2.xsl",
+                        "/success_view.xml")).toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }else {
-
             try {
+                System.out.println(result);
                 request.setAttribute("type",type+":"+ method);
                 if ("forward".equals(type)) { // 转发到指定页面
                     request.getRequestDispatcher(value).forward(request, response);

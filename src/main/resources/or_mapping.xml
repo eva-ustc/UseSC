@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OR-Mappering>
+    <jdbc>
+        <property>
+            <name></name>
+            <value></value>
+        </property>
+        <property>
+            <name></name>
+            <value></value>
+        </property>
+        <property>
+            <name></name>
+            <value></value>
+        </property>
+        <property>
+            <name></name>
+            <value></value>
+        </property>
+    </jdbc>
+    <class>
+        <name>User</name>
+        <table>tb_user</table>
+        <id>
+            <name>userId</name>
+            <column>user_id</column>
+        </id>
+        <property>
+            <name>userName</name>
+            <column>username</column>
+            <type>String</type>
+            <lazy>false</lazy>
+        </property>
+        <property>
+            <name>userPass</name>
+            <column>password</column>
+            <type>String</type>
+            <lazy>true</lazy>
+        </property>
+    </class>
+</OR-Mappering>

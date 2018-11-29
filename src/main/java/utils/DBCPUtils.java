@@ -26,11 +26,13 @@ public class DBCPUtils {
     static {
         try {
             // 加载配置数据源文件
-//            InputStream is = new FileInputStream("C:\\Users\\LRK\\Desktop\\log_file\\dbcp.properties");
-            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/dbcp.properties");
-                    properties.load(is);
+            InputStream is = new FileInputStream("D:/dbcp.properties");
+//            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/dbcp.properties");
 
-//            properties.load(new FileInputStream("src/main/resources/dbcp.properties"));
+
+            properties.load(is);
+
+//          properties.load(new FileInputStream("src/main/resources/dbcp.properties"));
 
         } catch (IOException e) {
             e.printStackTrace();

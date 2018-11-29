@@ -1,10 +1,21 @@
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.junit.jupiter.api.Test;
+import ustc.sse.dao.impl.ConversationTemplete;
+import ustc.sse.domain.User;
+import ustc.sse.proxy.UserProxy;
 import utils.DBCPUtils;
 import utils.XmlUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LRK
@@ -62,4 +73,84 @@ public class XmlTest {
             }
         }
     }
+
+    @Test
+    public void testParseTable(){
+        Map<String,Map<String,String>> table;
+
+            table = new HashMap<>();
+            SAXReader reader = new SAXReader();
+            try {
+                Document document = reader.read(new FileInputStream("D:/or_mapping.xml"));
+                Element root = document.getRootElement();// OR-Mappering
+                Element class_element = (Element) root.selectSingleNode("class");
+                for(Element child_ele :class_element.elements()){ // name table id property
+                    String child_eleText = child_ele.getName();
+                    Map<String,String> column_info = new HashMap<>();
+                    switch (child_eleText){
+                        case "property": // 读取name属性作为table的key
+                            String property_key="";
+                            for(Element property_element : child_ele.elements()){ //name column type lazy
+                                // 读取property节点下所有属性值,并将name节点值作为table的key
+                                String property_name = property_element.getName();
+                                if ("name".equals(property_name)){
+                                    property_key = property_element.getText();
+                                }
+                                column_info.put(property_name,property_element.getText());
+                            }
+                            table.put(property_key,column_info);
+                            break;
+                        case "id":// 使用tb_primarykey作为table的key
+                            for(Element property_id : child_ele.elements()){
+                                column_info.put(property_id.getName(),property_id.getText());
+                            }
+                            table.put("id",column_info);
+                            break;
+                        default: // 使用节点名作为table的key
+                            column_info.put(child_eleText,child_ele.getText());
+                            table.put(child_ele.getName(),column_info);
+                            break;
+                    }
+                }
+            System.out.println(table);
+
+//            XmlUtils.writeXML(document,new File("C:\\Users\\LRK\\Desktop\\log_file\\mappering.xml"));
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+    }
+
+    @Test
+    public void testConversionTemplete(){
+        ConversationTemplete templete = new ConversationTemplete();
+        User user = templete.getUserById(1);
+        System.out.println(user);
+    }
+    @Test
+    public void testUserProxy(){
+
+        UserProxy userProxy = new UserProxy();
+        User user = new User();
+        user.setUserName(null);
+        Object user_proxy =  userProxy.getProxy(User.class);
+        System.out.println(((User)user_proxy).getUserName());
+    }
+
+    @Test
+    public void testgetAttrById(){
+        ConversationTemplete conversationTemplete = new ConversationTemplete();
+        System.out.println(conversationTemplete.getAttrById(1,"userName"));
+    }
+    @Test
+    public void testLoadUserById(){
+        ConversationTemplete conversationTemplete = new ConversationTemplete();
+        User user = conversationTemplete.loadUserById(4);
+
+        System.out.println("=============");
+        System.out.println(user.getUserPass());
+        System.out.println(user);
+    }
+
 }

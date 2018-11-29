@@ -1,7 +1,9 @@
 package utils;
 
 import org.dom4j.*;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -11,6 +13,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -164,17 +167,22 @@ public class XmlUtils {
             throw new RuntimeException("传入的元素节点为null!");
         }
     }
-   /* public static void handlerResult(String method, HttpServletRequest request, HttpServletResponse response, String type, String value) {
+    /**
+     * 记录日志到log_xml文件
+     * @param document
+     * @param file
+     */
+    public static void writeXML(Document document, File file) {
+        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
+        outputFormat.setEncoding("UTF-8");
         try {
-            request.setAttribute("type",type+":"+ method);
-            if ("forward".equals(type)) { // 转发到指定页面
-                request.getRequestDispatcher(value).forward(request, response);
-            } else if ("redirect".equals(type)) { // 重定向到指定页面
-                response.sendRedirect(value);
-            }
-        } catch (Exception e) {
+            XMLWriter writer = new XMLWriter(new FileWriter(file),outputFormat);
+            writer.write(document);
+            writer.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }
+
 
 }

@@ -103,16 +103,22 @@
     </dependency>
 
     <!--mysql-->
-    <!--<dependency>
+    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.40</version>
-    </dependency>-->
+    </dependency>
     <!--postgresql-->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.2.2</version>
+    </dependency>
+    <!--dbutils-->
+    <dependency>
+      <groupId>commons-dbutils</groupId>
+      <artifactId>commons-dbutils</artifactId>
+      <version>1.6</version>
     </dependency>
       <!--lombok-->
     <dependency>

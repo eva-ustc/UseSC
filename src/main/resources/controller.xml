@@ -7,16 +7,35 @@
     </interceptor>
 
     <controller>
+        <!--登陆-->
         <action name="login" class="ustc.sse.action.LoginAction" method="handleLogin">
             <interceptor-ref name="log"/>
-            <result name="success" type="forward" value="pages/success_view.xml"/>
-            <result name="failure" type="redirect" value="pages/failure.jsp"/>
+            <result name="success" type="redirect" value="pages/success_view.xml"/>
+            <result name="failure" type="forward" value="pages/failure.jsp"/>
         </action>
+        <!--注册-->
         <action name="register" class="ustc.sse.action.RegisterAction" method="handleRegister">
+            <interceptor-ref name="log"/>
+            <result name="success" type="redirect" value="pages/welcome.jsp"/>
+            <result name="failure" type="forward" value="pages/failure.jsp"/>
+        </action>
+        <!--删除-->
+        <action name="delete" class="ustc.sse.action.UserAction" method="deleteUser">
             <interceptor-ref name="log"/>
             <result name="success" type="forward" value="pages/welcome.jsp"/>
             <result name="failure" type="redirect" value="pages/failure.jsp"/>
         </action>
-
+        <!--更新-->
+        <action name="update" class="ustc.sse.action.UserAction" method="updateUser">
+            <interceptor-ref name="log"/>
+            <result name="success" type="forward" value="pages/welcome.jsp"/>
+            <result name="failure" type="redirect" value="pages/failure.jsp"/>
+        </action>
+        <!--所有用户-->
+        <action name="users" class="ustc.sse.action.UserAction" method="getUsers">
+            <interceptor-ref name="log"/>
+            <result name="success" type="forward" value="pages/users.jsp"/>
+            <result name="failure" type="redirect" value="pages/failure.jsp"/>
+        </action>
     </controller>
 </sc-configuration>

@@ -21,7 +21,7 @@ public class LoginAction {
 
     private UserService userService = new UserServiceImpl();
 
-    public String handleLogin(String action_name,User user){
+    public String handleLogin(String action_name,User user,HttpServletRequest request){
         System.out.println("handleLogin...执行了");
         /*User user = new User();
         user.setUserName("eva");

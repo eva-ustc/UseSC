@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @author LRK
@@ -18,6 +19,7 @@ import java.sql.SQLException;
  */
 public class UserDaoImpl implements UserDao {
 
+    private ConversationTemplete conversationTemplete = new ConversationTemplete();
 
     @Override
     public User query(String sql) {
@@ -50,17 +52,39 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Boolean insert(String sql) {
-        return null;
+    public User getUserById(Integer id) {
+        return conversationTemplete.getUserById(id);
     }
 
     @Override
-    public Boolean update(String sql) {
-        return null;
+    public User getUserByName(String name) {
+        return conversationTemplete.getUserByName(name);
     }
 
     @Override
-    public Boolean delete(String sql) {
-        return null;
+    public Boolean insertUser(User user) throws SQLException {
+        return conversationTemplete.insertUser(user);
     }
+
+    @Override
+    public Boolean updateUser(User user) {
+        return conversationTemplete.updateUser(user);
+    }
+
+    @Override
+    public Boolean deleteUserByName(String userName) {
+        return conversationTemplete.deleteUserByName(userName);
+    }
+
+    @Override
+    public Boolean deleteUserById(Integer id) {
+        return conversationTemplete.deleteUserById(id);
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return conversationTemplete.getUsers();
+    }
+
+
 }

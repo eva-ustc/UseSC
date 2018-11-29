@@ -2,6 +2,9 @@ package ustc.sse.service;
 
 import ustc.sse.domain.User;
 
+import java.sql.SQLException;
+import java.util.List;
+
 /**
  * @author LRK
  * @project_name UseSC
@@ -12,5 +15,10 @@ import ustc.sse.domain.User;
  */
 public interface UserService {
 
-    boolean signIn(User user);
+    Boolean signIn(User user);
+    Boolean register(User user);
+    Boolean deleteUser(User user);
+    Boolean updateUser(User user);
+
+    List<User> getUsers();
 }
