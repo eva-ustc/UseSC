@@ -30,13 +30,13 @@ import java.util.Properties;
  */
 public class XmlUtils {
     public static Properties config_prop;
-    public static SimpleDateFormat date_format;
+//    public static SimpleDateFormat date_format;
     static { // 读取config.preperties配置文件
         config_prop = new Properties();
         try {
             config_prop.load(Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream("/config.properties"));
-            date_format = new SimpleDateFormat(config_prop.getProperty("date_format"));
+//            date_format = new SimpleDateFormat(config_prop.getProperty("date_format"));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -9,12 +9,15 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import utils.XmlUtils;
+import ustc.sse.config.SysConfig;
+import utils.SCConstant;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,7 +58,8 @@ public class ActionProxy implements MethodInterceptor {
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         try {
 
-            log_xml = new File(XmlUtils.config_prop.getProperty("log_location"));
+//            log_xml = new File(XmlUtils.config_prop.getProperty("log_location"));
+            log_xml = new File(SysConfig.getSysConfig().getProperty("log_location"));
             if (!log_xml.exists()){ // 如果不存在该目录则创建并初始化log_xml 创建根节点<log>
                 log_xml.createNewFile();
                 document = DocumentHelper.createDocument();
@@ -65,7 +69,8 @@ public class ActionProxy implements MethodInterceptor {
                 document = reader.read(log_xml);
                 root = document.getRootElement();
             }
-
+            DateFormat date_format = new SimpleDateFormat(SysConfig.getSysConfig()
+            .getProperty(SCConstant.DATE_FORMAT));
             // 预处理 记录日志
             System.out.println("preActionProxy...开始打印日志");
             // 添加一个action节点
@@ -73,16 +78,18 @@ public class ActionProxy implements MethodInterceptor {
             Map<String,String> map_log = new LinkedHashMap<>();
             // 添加action_name和s_time
             map_log.put("name",objects[0].toString());
-            map_log.put("s-time",XmlUtils.date_format.format(new Date()));
+            map_log.put("s-time",date_format.format(new Date()));
             // 执行真正的业务方法
+            // o是CGlib利用反射生成的,里面的属性无法自动注入
             // 因为action类由容器管理并自动注入属性,所以这里调用的是被代理对象的方法
+            System.out.println("执行被代理对象的方法!");
             result_str = methodProxy.invoke(target,objects);
 //            Thread.sleep(3000);
 
             // 事后 记录日志
-            System.out.println("afterActionProxy...");
+            System.out.println("afterActionProxy...完事了");
             // 添加e_time和result
-            map_log.put("e-time", XmlUtils.date_format.format(new Date()));
+            map_log.put("e-time", date_format.format(new Date()));
             map_log.put("result", result_str.toString());
             writeLogElement(action,map_log);
         }catch (Exception e){

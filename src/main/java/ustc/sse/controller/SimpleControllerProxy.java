@@ -1,11 +1,13 @@
 package ustc.sse.controller;
 
 import org.dom4j.Element;
+import ustc.sse.config.SysConfig;
 import ustc.sse.domain.User;
 import ustc.sse.ioc.ApplicationContext;
 import ustc.sse.ioc.Bean;
 import ustc.sse.ioc.ConfigManager;
 import ustc.sse.proxy.ActionProxy;
+import utils.SCConstant;
 import utils.XmlUtils;
 
 import javax.servlet.ServletException;
@@ -49,9 +51,11 @@ public class SimpleControllerProxy extends HttpServlet {
                 String method_name = XmlUtils.getAttrValueByName(action_element,"method");
                 try {
 
-                    // TODO 在applicationContext.xml中查找是否包含与请求的action同名的bean节点
+                    // 在applicationContext.xml中查找是否包含与请求的action同名的bean节点
                     // applicationContext.xml配置信息:bean列表
-                    Map<String, Bean> bean_config = ConfigManager.getConfig("/applicationContext.xml");
+//                    Map<String, Bean> bean_config = ConfigManager.getConfig("/applicationContext.xml");
+                    Map<String, Bean> bean_config = ConfigManager.getConfig(SysConfig.getSysConfig()
+                            .getProperty(SCConstant.APPLICATION_CONTEXT_LOCATION));
                     String action_name = getSimpleName(class_name);
                     Object target = null;
                     Class clazz = null;
@@ -65,7 +69,9 @@ public class SimpleControllerProxy extends HttpServlet {
                         // 如果无依赖,直接通过反射构造该bean实例,并风发请求
                         // 如果有属性依赖,反射先构造被依赖属性(如 userDao)的实例,之后再构造依赖(如 userService)
                         // 依赖注入 setter方法,并分发请求 在手写ioc包中实现
-                        ApplicationContext context = new ApplicationContext("/applicationContext.xml");
+//                        ApplicationContext context = new ApplicationContext("/applicationContext.xml");
+                        ApplicationContext context = new ApplicationContext(SysConfig.getSysConfig()
+                        .getProperty(SCConstant.APPLICATION_CONTEXT_LOCATION));
                         target = context.getBean(toLowerCaseFirstOne(action_name));
                         clazz = target.getClass();
                     }
@@ -152,8 +158,11 @@ public class SimpleControllerProxy extends HttpServlet {
         action_name = request_path.substring(request_path.lastIndexOf('/')+1, request_path.lastIndexOf('.'));
         System.out.println("action_name: "+action_name);
         // 获取资源文件下的xml配置文件
+//        controller_xml = new File(this.getClass()
+//                .getResource("/controller.xml").getFile());
         controller_xml = new File(this.getClass()
-                .getResource("/controller.xml").getFile());
+                .getResource(SysConfig.getSysConfig()
+                .getProperty(SCConstant.CONTROLLER_LOCATION)).getFile());
         // 获取所有action的name属性
         actionNames = XmlUtils.getActionAttributes(controller_xml, "name");
         // 判断方法是否匹配

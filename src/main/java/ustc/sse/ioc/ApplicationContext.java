@@ -18,9 +18,9 @@ public class ApplicationContext implements BeanFactory {
     private Map<String,Bean> map_config;
     // 作为IOC容器使用
     private Map<String,Object> context = new HashMap<>();
-    private static int i = 0;
+//    private static int i = 0; 测试用
     public ApplicationContext(String path){
-        System.out.println(i++);
+//        System.out.println(i++);
         // 初始化IOC容器,创建单例对象并加入IOC容器
         // 获取配置信息
         map_config = ConfigManager.getConfig(path);
@@ -37,7 +37,7 @@ public class ApplicationContext implements BeanFactory {
                 context.put(bean_id,beanObj);
             }
         }
-        System.out.println(context);
+//        System.out.println(context);
 
     }
 
@@ -107,7 +107,7 @@ public class ApplicationContext implements BeanFactory {
             // 如果为空表示不是单例,新创建一个bean对象
             bean = createBean(map_config.get(id));
         }
-        System.out.println(context);
+//        System.out.println(context);
         return bean;
     }
 }

@@ -19,7 +19,7 @@ import java.text.MessageFormat;
  */
 public class LoginAction {
 
-    private UserService userService=new UserServiceImpl();
+    private UserService userService;
 
     public void setUserService(UserService userService) {
         this.userService = userService;

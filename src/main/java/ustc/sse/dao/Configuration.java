@@ -3,6 +3,8 @@ package ustc.sse.dao;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import ustc.sse.config.SysConfig;
+import utils.SCConstant;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -28,8 +30,11 @@ public class Configuration {
         table = new HashMap<>();
         SAXReader reader = new SAXReader();
         try {
+//            Document document = reader.read(Thread.currentThread()
+//            .getContextClassLoader().getResourceAsStream("/or_mapping.xml")); // 运行环境映射文件
             Document document = reader.read(Thread.currentThread()
-            .getContextClassLoader().getResourceAsStream("/or_mapping.xml")); // 运行环境映射文件
+                    .getContextClassLoader().getResourceAsStream(SysConfig.getSysConfig()
+                    .getProperty(SCConstant.OR_MAPPING_LOCATION)));
 //            Document document = reader.read(new FileInputStream("D:/or_mapping.xml")); //测试环境映射文件
             Element root = document.getRootElement();// OR-Mappering
             Element class_element = (Element) root.selectSingleNode("class");
@@ -61,7 +66,7 @@ public class Configuration {
                         break;
                 }
             }
-            System.out.println(table);
+//            System.out.println(table);
         } catch (Exception e) {
             e.printStackTrace();
         }

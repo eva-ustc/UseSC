@@ -2,6 +2,7 @@ package utils;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import ustc.sse.config.SysConfig;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -28,8 +29,11 @@ public class DBCPUtils {
         try {
             // 加载数据源配置文件
 //            InputStream is = new FileInputStream("D:/dbcp.properties");
+//            InputStream is = Thread.currentThread().getContextClassLoader()
+//                    .getResourceAsStream("/dbcp.properties");
             InputStream is = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("/dbcp.properties");
+                    .getResourceAsStream(SysConfig.getSysConfig()
+                    .getProperty(SCConstant.DATASOURCE_CONFIG_LOCATION));
 
             properties.load(is);
 

@@ -32,7 +32,7 @@ public class ConversationTemplete implements Conversation {
         this.configuration = configuration;
     }
 
-    private Connection conn = DBCPUtils.getConnection();
+    private Connection conn= null;
     private QueryRunner queryRunner = new QueryRunner();
     private String table_name = configuration.getTableName();
     private String table_pk = configuration.getTablePK();
@@ -49,6 +49,7 @@ public class ConversationTemplete implements Conversation {
     public User getUserById(Integer id) {
         String sql = MessageFormat.format("select * from {0} where {1}={2}", table_name, table_pk, id);
         try {
+            conn = DBCPUtils.getConnection();
             System.out.println(sql);
             return queryRunner.query(conn,sql,new UserHandler());
         } catch (SQLException e) {
@@ -66,6 +67,7 @@ public class ConversationTemplete implements Conversation {
     public User getUserByName(String name) {
         String sql = MessageFormat.format("select * from {0} where {1}=''{2}''", table_name, table_username, name);
         try {
+            conn = DBCPUtils.getConnection();
             System.out.println(sql);
             return queryRunner.query(conn,sql,new UserHandler());
         } catch (SQLException e) {
@@ -85,6 +87,7 @@ public class ConversationTemplete implements Conversation {
         String sql = MessageFormat.format("insert into {0}(username,password) values(''{1}'',''{2}'')",
                 table_name,user.getUserName(),user.getUserPass());
         System.out.println(sql);
+        conn = DBCPUtils.getConnection();
         if (queryRunner.update(conn, sql)!=0){
 
             return true;
@@ -102,6 +105,7 @@ public class ConversationTemplete implements Conversation {
     public boolean deleteUserById(Integer id) {
         String sql = MessageFormat.format("delete from {0} where {1}={2}",table_name, table_pk, id);
         try {
+            conn = DBCPUtils.getConnection();
             System.out.println(sql);
             queryRunner.update(conn,sql);
             return true;
@@ -120,6 +124,7 @@ public class ConversationTemplete implements Conversation {
     public Boolean deleteUserByName(String userName) {
         String sql = MessageFormat.format("delete from {0} where {1}=''{2}''",table_name, table_username, userName);
         try {
+            conn = DBCPUtils.getConnection();
             System.out.println(sql);
             queryRunner.update(conn,sql);
             return true;
@@ -137,6 +142,7 @@ public class ConversationTemplete implements Conversation {
     public List<User> getUsers() {
         String sql = MessageFormat.format("select * from {0}",table_name);
         try {
+            conn = DBCPUtils.getConnection();
             return queryRunner.query(conn,sql,new UserListHandler());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,6 +161,7 @@ public class ConversationTemplete implements Conversation {
         String sql = MessageFormat.format("select {0} from {1} where user_id={2}",
                 configuration.getTableColumn(attrName),table_name,userId);
         try {
+            conn = DBCPUtils.getConnection();
             return queryRunner.query(conn, sql, new ResultSetHandler<String>() {
                 @Override
                 public String handle(ResultSet rs) throws SQLException {
@@ -206,6 +213,7 @@ public class ConversationTemplete implements Conversation {
                     return null;
                 }
             });*/
+            conn = DBCPUtils.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql.toString());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()){
@@ -239,6 +247,7 @@ public class ConversationTemplete implements Conversation {
         String sql = MessageFormat.format("update {0} set {1}=''{2}'' where {3}=''{4}''",
                 table_name,table_password,user.getUserPass(),table_username,user.getUserName());
         try {
+            conn = DBCPUtils.getConnection();
             System.out.println(sql);
             queryRunner.update(conn,sql);
             return true;
