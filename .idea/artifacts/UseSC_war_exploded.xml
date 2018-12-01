@@ -52,6 +52,7 @@
           <element id="library" level="project" name="Maven: mysql:mysql-connector-java:5.1.40" />
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.2" />
           <element id="library" level="project" name="Maven: commons-dbutils:commons-dbutils:1.6" />
+          <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils:1.7.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">

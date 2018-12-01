@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sc-di>
+    <bean id="configuration" class="ustc.sse.dao.Configuration"/>
+    <bean id="conversationTemplete" class="ustc.sse.dao.impl.ConversationTemplete">
+        <property name="configuration" bean-ref="configuration"/>
+    </bean>
+    <bean id="userDao" class="ustc.sse.dao.impl.UserDaoImpl" singleton="true">
+        <property name="conversationTemplete" bean-ref="conversationTemplete"/>
+    </bean>
+    <bean id="userService" class="ustc.sse.service.impl.UserServiceImpl">
+        <property name="userDao" bean-ref="userDao"/>
+    </bean>
+    <bean id="userAction" class="ustc.sse.action.UserAction" singleton="false">
+        <property name="userService" bean-ref="userService"/>
+    </bean>
+    <bean id="loginAction" class="ustc.sse.action.LoginAction" singleton="false">
+        <property name="userService" bean-ref="userService"/>
+    </bean>
+    <bean id="registerAction" class="ustc.sse.action.RegisterAction" singleton="false">
+        <property name="userService" bean-ref="userService"/>
+    </bean>
+
+</sc-di>

@@ -143,8 +143,9 @@ public class XmlTest {
         ConversationTemplete conversationTemplete = new ConversationTemplete();
         System.out.println(conversationTemplete.getAttrById(1,"userName"));
     }
+
     @Test
-    public void testLoadUserById(){
+    public void testLoadUserById(){ // 懒加载测试
         ConversationTemplete conversationTemplete = new ConversationTemplete();
         User user = conversationTemplete.loadUserById(4);
 
@@ -152,5 +153,4 @@ public class XmlTest {
         System.out.println(user.getUserPass());
         System.out.println(user);
     }
-
 }

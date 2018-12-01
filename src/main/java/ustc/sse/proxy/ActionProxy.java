@@ -16,9 +16,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+
 
 /**
  * @author LRK
@@ -73,15 +74,15 @@ public class ActionProxy implements MethodInterceptor {
             // 添加action_name和s_time
             map_log.put("name",objects[0].toString());
             map_log.put("s-time",XmlUtils.date_format.format(new Date()));
-
             // 执行真正的业务方法
-            result_str = methodProxy.invokeSuper(o,objects);
+            // 因为action类由容器管理并自动注入属性,所以这里调用的是被代理对象的方法
+            result_str = methodProxy.invoke(target,objects);
 //            Thread.sleep(3000);
 
             // 事后 记录日志
             System.out.println("afterActionProxy...");
             // 添加e_time和result
-            map_log.put("e-time",XmlUtils.date_format.format(new Date()));
+            map_log.put("e-time", XmlUtils.date_format.format(new Date()));
             map_log.put("result", result_str.toString());
             writeLogElement(action,map_log);
         }catch (Exception e){

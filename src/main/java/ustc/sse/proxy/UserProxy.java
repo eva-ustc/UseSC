@@ -4,6 +4,7 @@ import net.sf.cglib.proxy.*;
 import ustc.sse.dao.Configuration;
 import ustc.sse.dao.impl.ConversationTemplete;
 import ustc.sse.domain.User;
+import utils.CommonUtils;
 
 import java.lang.reflect.Method;
 
@@ -17,7 +18,12 @@ import java.lang.reflect.Method;
  */
 public class UserProxy implements MethodInterceptor {
 
-    private ConversationTemplete conversationTemplete = new ConversationTemplete();
+    private ConversationTemplete conversationTemplete;
+
+    public void setConversationTemplete(ConversationTemplete conversationTemplete) {
+        this.conversationTemplete = conversationTemplete;
+    }
+
     private Configuration configuration = new Configuration();
     private Class target;
 
@@ -45,7 +51,7 @@ public class UserProxy implements MethodInterceptor {
         } else if (methodName.startsWith("get")) { // 如果是getXXX属性,读取configuration配置文件,并查看属性是否是懒加载
             User user = (User) o;
             String attrNameUpperFirstOne = methodName.substring(3);
-            String attrNameLowwerFirstOne = toLowerCaseFirstOne(attrNameUpperFirstOne);
+            String attrNameLowwerFirstOne = CommonUtils.toLowerCaseFirstOne(attrNameUpperFirstOne);
 
             // 如果不是懒加载则直接返回
             if (!configuration.isLazyLoad(attrNameLowwerFirstOne)) { //如果不是懒加载则直接返回
@@ -72,17 +78,4 @@ public class UserProxy implements MethodInterceptor {
         return obj;
 //        Object result =methodProxy.invokeSuper(user,objects);
     }
-
-    /**
-     * 首字母转小写
-     * @param s
-     * @return
-     */
-    private String toLowerCaseFirstOne(String s){
-        if(Character.isLowerCase(s.charAt(0)))
-            return s;
-        else
-            return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
-    }
-
 }

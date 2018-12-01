@@ -16,7 +16,15 @@ import java.util.List;
  */
 public class UserAction implements  IUserAction{
 
-    private UserService userService = new UserServiceImpl();
+    private UserService userService;
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
 
     /**
      * 删除用户
@@ -50,6 +58,13 @@ public class UserAction implements  IUserAction{
         }
     }
 
+    /**
+     * 查询所有用户信息
+     * @param action_name
+     * @param user
+     * @param request
+     * @return
+     */
     @Override
     public String getUsers(String action_name, User user, HttpServletRequest request) {
         List<User> users = userService.getUsers();

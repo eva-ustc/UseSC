@@ -127,6 +127,12 @@
       <version>1.16.20</version>
       <scope>provided</scope>
     </dependency>
+    <!--BeanUtils-->
+    <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.7.0</version>
+    </dependency>
 
 
   </dependencies>

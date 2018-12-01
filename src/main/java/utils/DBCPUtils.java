@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
 /**
  * @author LRK
  * @project_name UseSC
@@ -25,14 +26,12 @@ public class DBCPUtils {
     // 加载DBCP配置
     static {
         try {
-            // 加载配置数据源文件
-            InputStream is = new FileInputStream("D:/dbcp.properties");
-//            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("/dbcp.properties");
-
+            // 加载数据源配置文件
+//            InputStream is = new FileInputStream("D:/dbcp.properties");
+            InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("/dbcp.properties");
 
             properties.load(is);
-
-//          properties.load(new FileInputStream("src/main/resources/dbcp.properties"));
 
         } catch (IOException e) {
             e.printStackTrace();

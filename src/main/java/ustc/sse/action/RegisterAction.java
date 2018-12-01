@@ -17,16 +17,19 @@ import java.sql.SQLException;
  * @description God Bless, No Bug!
  */
 public class RegisterAction {
-    UserService userService = new UserServiceImpl();
+    UserService userService;
 
-    public String handleRegister(String action_name, User user,HttpServletRequest request) {
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public String handleRegister(String action_name, User user, HttpServletRequest request) {
 
         System.out.println("handleRegister...执行了!");
 
             if (userService.register(user)){
                 return "success";
             }
-
         return "failure";
     }
 }

@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  * @author LRK
  * @project_name UseSC
@@ -27,9 +28,9 @@ public class Configuration {
         table = new HashMap<>();
         SAXReader reader = new SAXReader();
         try {
-//            Document document = reader.read(Thread.currentThread()
-//            .getContextClassLoader().getResourceAsStream("/or_mapping.xml")); // 运行环境映射文件
-            Document document = reader.read(new FileInputStream("D:/or_mapping.xml")); //测试环境映射文件
+            Document document = reader.read(Thread.currentThread()
+            .getContextClassLoader().getResourceAsStream("/or_mapping.xml")); // 运行环境映射文件
+//            Document document = reader.read(new FileInputStream("D:/or_mapping.xml")); //测试环境映射文件
             Element root = document.getRootElement();// OR-Mappering
             Element class_element = (Element) root.selectSingleNode("class");
             for(Element child_ele :class_element.elements()){ // name table id property

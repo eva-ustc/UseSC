@@ -1,19 +1,13 @@
 package ustc.sse.dao.impl;
 
-import org.apache.commons.dbutils.BasicRowProcessor;
-import org.apache.commons.dbutils.BeanProcessor;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.ScalarHandler;
 import ustc.sse.dao.Configuration;
-import ustc.sse.dao.IConversation;
+import ustc.sse.dao.Conversation;
 import ustc.sse.domain.User;
 import ustc.sse.proxy.UserProxy;
 import utils.DBCPUtils;
 
-import java.beans.PropertyDescriptor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,9 +24,14 @@ import java.util.List;
  * @description God Bless, No Bug!
  *      对象操作映射为数据表操作
  */
-public class ConversationTemplete implements IConversation {
+public class ConversationTemplete implements Conversation {
 
     private Configuration configuration = new Configuration();
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
     private Connection conn = DBCPUtils.getConnection();
     private QueryRunner queryRunner = new QueryRunner();
     private String table_name = configuration.getTableName();

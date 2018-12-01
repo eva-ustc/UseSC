@@ -19,6 +19,14 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao = new UserDaoImpl();
 
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
     /**
      * 登录验证
      * @param user

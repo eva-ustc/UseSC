@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2018/11/29 0:20
  * @description God Bless, No Bug!
  */
-public interface IConversation {
+public interface Conversation {
 
     User getUserById(Integer id);
     User getUserByName(String name);

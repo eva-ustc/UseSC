@@ -2,9 +2,10 @@ package ustc.sse.controller;
 
 import org.dom4j.Element;
 import ustc.sse.domain.User;
+import ustc.sse.ioc.ApplicationContext;
+import ustc.sse.ioc.Bean;
+import ustc.sse.ioc.ConfigManager;
 import ustc.sse.proxy.ActionProxy;
-import ustc.sse.service.UserService;
-import ustc.sse.service.impl.UserServiceImpl;
 import utils.XmlUtils;
 
 import javax.servlet.ServletException;
@@ -13,12 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
 
 /**
  * @author LRK
@@ -28,48 +29,48 @@ import java.util.Objects;
  * @description God Bless, No Bug!
  */
 public class SimpleControllerProxy extends HttpServlet {
-    private static final String ERROR = "pages/error.jsp";
+    private static final String ERROR_PAGE = "pages/error.jsp";
+
     private String action_name;
     private File controller_xml;
     private List<String> actionNames;
     private boolean hasAction;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        UserService userService = new UserServiceImpl();
-        initParams(req, resp);
-        // 查询所有用户
-        /*if ("users".equals(action_name)){
-            req.setAttribute("users",userService.getUsers());
-            req.getRequestDispatcher("/pages/users.jsp").forward(req,resp);
-        }*/
-        for(String actionName : actionNames){
-            if (actionName.equals(action_name)){// 匹配成功 name=login,利用反射执行相应操作
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
+        initParams(req, resp); // 初始化各项数据
+        for(String actionName : actionNames){ // 判断请求是否合法
+            if (actionName.equals(action_name)){// 匹配成功 如:name=login,利用反射执行相应操作
                 hasAction =true;
                 //  获取当前action节点
                 Element action_element = XmlUtils.getElementByAttr(controller_xml,"action","name",actionName);
-
-/*               // 判断是否存在interceptor-ref节点
-                List<Element> interceptor_ref_elements = action_element.elements("interceptor-ref");
-
-               if (interceptor_ref_elements !=null){
-                    hasInterceptor = true;
-                    for(Element interceptor_ref_element : interceptor_ref_elements){
-
-                        interceptor_name = interceptor_ref_element.attribute("name").getText();
-                        doInterceptorProxy(interceptor_name);
-//                        doInterceptor(interceptor_name,PRE_EXECUTION);
-                    }
-                }*/
-
+                // 获取类名和方法名 如 ustc.sse.action.LoginACtion 和 handleLogin
                 String class_name = XmlUtils.getAttrValueByName(action_element,"class");
                 String method_name = XmlUtils.getAttrValueByName(action_element,"method");
                 try {
-                    // 创建被代理对象和代理对象,调用代理对象的method
-                    Class clazz = Class.forName(class_name);
-                    ActionProxy actionProxy = new ActionProxy();
 
-                    Object target = clazz.newInstance();
+                    // TODO 在applicationContext.xml中查找是否包含与请求的action同名的bean节点
+                    // applicationContext.xml配置信息:bean列表
+                    Map<String, Bean> bean_config = ConfigManager.getConfig("/applicationContext.xml");
+                    String action_name = getSimpleName(class_name);
+                    Object target = null;
+                    Class clazz = null;
+                    // 如果没有指定bean节点,则直接通过反射构造Action实例,并分发请求
+                    if (!bean_config.containsKey(toLowerCaseFirstOne(action_name))) {
+                        // 创建被代理对象和代理对象,调用代理对象的method
+                        clazz = Class.forName(class_name);
+                        target = clazz.newInstance();
+                    }else {
+                        // 如果找到了指定bean节点,查看该节点是否有属性依赖其他bean节点
+                        // 如果无依赖,直接通过反射构造该bean实例,并风发请求
+                        // 如果有属性依赖,反射先构造被依赖属性(如 userDao)的实例,之后再构造依赖(如 userService)
+                        // 依赖注入 setter方法,并分发请求 在手写ioc包中实现
+                        ApplicationContext context = new ApplicationContext("/applicationContext.xml");
+                        target = context.getBean(toLowerCaseFirstOne(action_name));
+                        clazz = target.getClass();
+                    }
+
+                    ActionProxy actionProxy = new ActionProxy();
                     Object proxy = actionProxy.getProxy(target);
 
                     User user = encapsulateParaUser(req);
@@ -77,19 +78,9 @@ public class SimpleControllerProxy extends HttpServlet {
 
                     // 调用代理对象加强业务方法
                     Method method = clazz.getDeclaredMethod(method_name,String.class,User.class,HttpServletRequest.class);
-
                     String result = (String) method.invoke(proxy,action_name,user,req);
                     // 根据方法的返回值,查询次action下的result节点的name属性 跳转/重定向
                     handleResult(action_element,result,method_name,req,resp);
-                    /*// 利用反射执行指定方法获取方法返回值
-                    result = (String) doMethod(class_name, method_name);
-
-                    if (hasInterceptor){ // 执行afterdo 方法
-                        for(Element interceptor_ref_element : interceptor_ref_elements){
-                            interceptor_name = interceptor_ref_element.attribute("name").getText();
-//                            doInterceptor(interceptor_name,AFTER_EXECUTION);
-                        }
-                    }*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -97,9 +88,18 @@ public class SimpleControllerProxy extends HttpServlet {
             }
         }
         if (!hasAction) { // 没有匹配请求的方法
-
-            resp.sendRedirect(ERROR);
+            resp.sendRedirect(ERROR_PAGE);
         }
+    }
+
+    /**
+     * 截取全限定类名的简短类名
+     * @param class_name
+     * @return
+     */
+    private String getSimpleName(String class_name) {
+
+        return class_name.substring(class_name.lastIndexOf(".")+1);
     }
 
     /**
@@ -152,7 +152,8 @@ public class SimpleControllerProxy extends HttpServlet {
         action_name = request_path.substring(request_path.lastIndexOf('/')+1, request_path.lastIndexOf('.'));
         System.out.println("action_name: "+action_name);
         // 获取资源文件下的xml配置文件
-        controller_xml = new File(this.getClass().getResource("/controller.xml").getFile());
+        controller_xml = new File(this.getClass()
+                .getResource("/controller.xml").getFile());
         // 获取所有action的name属性
         actionNames = XmlUtils.getActionAttributes(controller_xml, "name");
         // 判断方法是否匹配
@@ -188,7 +189,7 @@ public class SimpleControllerProxy extends HttpServlet {
         // 获取result的type value属性
         String type = result_element.attribute("type").getText();
         String value = result_element.attribute("value").getText();
-       /* // 测试是否是一个request 是同一个request
+       /* // 测试是否是一个request 结果:是同一个request
         System.out.println(request);
         List<User> users = (List<User>)request.getAttribute("users");
         System.out.println(users);*/
@@ -215,9 +216,14 @@ public class SimpleControllerProxy extends HttpServlet {
         }
 
     }
-
+    private String toLowerCaseFirstOne(String s){
+        if(Character.isLowerCase(s.charAt(0)))
+            return s;
+        else
+            return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
+    }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req,resp);
     }
 }

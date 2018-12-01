@@ -21,6 +21,10 @@ public class UserDaoImpl implements UserDao {
 
     private ConversationTemplete conversationTemplete = new ConversationTemplete();
 
+    public void setConversationTemplete(ConversationTemplete conversationTemplete) {
+        this.conversationTemplete = conversationTemplete;
+    }
+
     @Override
     public User query(String sql) {
         Connection connection=null;
