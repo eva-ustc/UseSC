@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ConversationTemplete implements Conversation {
 
-    private Configuration configuration = new Configuration();
+    private Configuration configuration;
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
@@ -34,12 +34,26 @@ public class ConversationTemplete implements Conversation {
 
     private Connection conn= null;
     private QueryRunner queryRunner = new QueryRunner();
-    private String table_name = configuration.getTableName();
-    private String table_pk = configuration.getTablePK();
-    private String table_username = configuration.getTableColumn("userName");
-    private String table_password = configuration.getTableColumn("userPass");
+    private String table_name = null;
+    private String table_pk = null;
+    private String table_username = null;
+    private String table_password = null;
     // TODO 对象操作转为表操作
 
+    private void initTable(){
+        if (table_name == null){
+            table_name = configuration.getTableName();
+        }
+        if (table_pk == null){
+            table_pk = configuration.getTablePK();
+        }
+        if (table_username == null){
+            table_username = configuration.getTableColumn("userName");
+        }
+        if (table_password == null){
+            table_password = configuration.getTableColumn("userPass");
+        }
+    }
     /**
      * 根据Id查询用户
      * @param id user_id
@@ -47,6 +61,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public User getUserById(Integer id) {
+        initTable();
         String sql = MessageFormat.format("select * from {0} where {1}={2}", table_name, table_pk, id);
         try {
             conn = DBCPUtils.getConnection();
@@ -65,6 +80,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public User getUserByName(String name) {
+        initTable();
         String sql = MessageFormat.format("select * from {0} where {1}=''{2}''", table_name, table_username, name);
         try {
             conn = DBCPUtils.getConnection();
@@ -84,6 +100,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public boolean insertUser(User user) throws SQLException {
+        initTable();
         String sql = MessageFormat.format("insert into {0}(username,password) values(''{1}'',''{2}'')",
                 table_name,user.getUserName(),user.getUserPass());
         System.out.println(sql);
@@ -103,6 +120,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public boolean deleteUserById(Integer id) {
+        initTable();
         String sql = MessageFormat.format("delete from {0} where {1}={2}",table_name, table_pk, id);
         try {
             conn = DBCPUtils.getConnection();
@@ -122,6 +140,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public Boolean deleteUserByName(String userName) {
+        initTable();
         String sql = MessageFormat.format("delete from {0} where {1}=''{2}''",table_name, table_username, userName);
         try {
             conn = DBCPUtils.getConnection();
@@ -140,6 +159,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public List<User> getUsers() {
+        initTable();
         String sql = MessageFormat.format("select * from {0}",table_name);
         try {
             conn = DBCPUtils.getConnection();
@@ -158,6 +178,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public String getAttrById(Integer userId, String attrName) {
+        initTable();
         String sql = MessageFormat.format("select {0} from {1} where user_id={2}",
                 configuration.getTableColumn(attrName),table_name,userId);
         try {
@@ -184,6 +205,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public User loadUserById(Integer id) {
+        initTable();
         StringBuilder sql = new StringBuilder("select user_id");
         if (!configuration.isLazyLoad("userName")){
             sql.append(","+table_username);
@@ -243,7 +265,7 @@ public class ConversationTemplete implements Conversation {
      */
     @Override
     public boolean updateUser(User user) {
-
+        initTable();
         String sql = MessageFormat.format("update {0} set {1}=''{2}'' where {3}=''{4}''",
                 table_name,table_password,user.getUserPass(),table_username,user.getUserName());
         try {

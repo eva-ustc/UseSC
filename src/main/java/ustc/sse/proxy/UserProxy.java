@@ -53,7 +53,6 @@ public class UserProxy implements MethodInterceptor {
             String attrNameUpperFirstOne = methodName.substring(3);
             String attrNameLowwerFirstOne = CommonUtils.toLowerCaseFirstOne(attrNameUpperFirstOne);
 
-            // 如果不是懒加载则直接返回
             if (!configuration.isLazyLoad(attrNameLowwerFirstOne)) { //如果不是懒加载则直接返回
 
                 return methodProxy.invokeSuper(user, objects);

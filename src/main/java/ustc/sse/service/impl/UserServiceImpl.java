@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class UserServiceImpl implements UserService {
 
-    private UserDao userDao = new UserDaoImpl();
+    private UserDao userDao;
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;

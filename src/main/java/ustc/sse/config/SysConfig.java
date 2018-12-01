@@ -1,5 +1,10 @@
 package ustc.sse.config;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -12,7 +17,13 @@ import java.util.Properties;
  */
 public class SysConfig {
     private static Properties sys_config = null;
+    private static Document xml_doc = null;
+    private static Element root_element = null;
 
+    /**
+     * 获取config.properties配置文件信息
+     * @return sys_config
+     */
     public static Properties getSysConfig(){
         try {
             if (sys_config == null){
@@ -25,4 +36,6 @@ public class SysConfig {
         }
         return  sys_config;
     }
+
+
 }

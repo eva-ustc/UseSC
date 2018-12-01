@@ -1,5 +1,6 @@
 package utils;
 
+import org.apache.xerces.dom.DocumentImpl;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -29,7 +30,7 @@ import java.util.Properties;
  * @description God Bless, No Bug!
  */
 public class XmlUtils {
-    public static Properties config_prop;
+/*    private static Properties config_prop;
 //    public static SimpleDateFormat date_format;
     static { // 读取config.preperties配置文件
         config_prop = new Properties();
@@ -40,8 +41,50 @@ public class XmlUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }*/
+    /**
+     * 读取xml文档,返回Document对象
+     * @return
+     */
+    public static Document getXmlDoc(String src_path){
+
+        SAXReader reader = new SAXReader();
+        Document xml_doc = null;
+        try {
+            xml_doc = reader.read(Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(src_path));
+        } catch (DocumentException e) {
+            e.printStackTrace();
+            throw new RuntimeException("xml文档路径可能出错~");
+        }
+        return xml_doc;
+    }
+    public static Document getXmlDoc(File src_file){
+
+        SAXReader reader = new SAXReader();
+        Document xml_doc = null;
+        try {
+            xml_doc = reader.read(src_file);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+            throw new RuntimeException("xml文档路径可能出错~");
+        }
+        return xml_doc;
     }
 
+    /**
+     * 获取xml文档的根元素
+     * @param src_path xml文档在资源文件下的路径
+     * @return
+     */
+    public static Element getRootElement(String src_path){
+
+        return getXmlDoc(src_path).getRootElement();
+    }
+    public static Element getRootElement(File src_file){
+
+        return getXmlDoc(src_file).getRootElement();
+    }
     /**
      * 将XML文件转换成HTML文件字节数组输出流
      * @param xsl_path xsl文件路径 (在资源文件目录下)
@@ -82,23 +125,18 @@ public class XmlUtils {
      */
     public static List<String> getActionAttributes(File xml_file, String attr){
         List<String> actionNames = new ArrayList<>();
-        SAXReader reader = new SAXReader();
-        try {
-            // 获取xml文档
-            Document document = reader.read(xml_file);
-            // 获取根元素 sc-configuration
-            Element root = document.getRootElement();
-            // 获取Controller
-            Element controller = root.element("controller");
-            List<Element> action_list = controller.elements("action");
-            for(Element action :action_list){
-                actionNames.add(action.attribute(attr).getText());
-            }
+
+        // 获取根元素 sc-configuration
+        Element root = getRootElement(xml_file);
+        // 获取Controller
+        Element controller = root.element("controller");
+        List<Element> action_list = controller.elements("action");
+        for(Element action :action_list){
+            actionNames.add(action.attribute(attr).getText());
+        }
 //            System.out.println(actionNames);
 
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
+
         return  actionNames;
     }
 
@@ -110,22 +148,15 @@ public class XmlUtils {
      */
     public static List<String> getAllAttributes(File xml_file,String attrName){
         List<String> attributes = new ArrayList<>();
-        SAXReader reader = new SAXReader();
-        try {
-            // 获取xml文档
-            Document document = reader.read(xml_file);
-            // 获取根元素 sc-configuration
-            Element root = document.getRootElement();
 
-            List<Node> action_list = root.selectNodes("//action");
-            for(Node action :action_list){
-                attributes.add(((Element)action).attribute(attrName).getText());
-            }
-            System.out.println(attributes);
-
-        } catch (DocumentException e) {
-            e.printStackTrace();
+        // 获取根元素 sc-configuration
+        Element root = getRootElement(xml_file);
+        List<Node> action_list = root.selectNodes("//action");
+        for(Node action :action_list){
+            attributes.add(((Element)action).attribute(attrName).getText());
         }
+//          System.out.println(attributes);
+
         return  attributes;
     }
 
@@ -138,19 +169,11 @@ public class XmlUtils {
      * @return
      */
     public static Element getElementByAttr(File xml_file, String element_name,String attr_name, String attr_value){
-        SAXReader reader = new SAXReader();
-        Element element = null;
-        try {
-            Document document = reader.read(xml_file);
-            Element root = document.getRootElement();
-            // //name[attr='attrName']
-            String sel_str = MessageFormat.format("//{0}[@{1}=''{2}'']", element_name, attr_name, attr_value);
+        Element root = getRootElement(xml_file);
+        // //name[attr='attrName']
+        String sel_str = MessageFormat.format("//{0}[@{1}=''{2}'']", element_name, attr_name, attr_value);
 //            System.out.println(sel_str);
-            element = (Element) root.selectSingleNode(sel_str);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
-        return element;
+        return (Element) root.selectSingleNode(sel_str);
     }
 
     /**

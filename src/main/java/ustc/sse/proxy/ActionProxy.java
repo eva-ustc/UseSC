@@ -11,6 +11,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import ustc.sse.config.SysConfig;
 import utils.SCConstant;
+import utils.XmlUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -59,7 +60,9 @@ public class ActionProxy implements MethodInterceptor {
         try {
 
 //            log_xml = new File(XmlUtils.config_prop.getProperty("log_location"));
-            log_xml = new File(SysConfig.getSysConfig().getProperty("log_location"));
+            // 读取配置文件中的日志保存位置信息,按照日期分类
+            log_xml = new File(SysConfig.getSysConfig().getProperty("log_location")+"log_"+
+                new SimpleDateFormat("yyyy_MM_dd").format(new Date()).toString()+".xml");
             if (!log_xml.exists()){ // 如果不存在该目录则创建并初始化log_xml 创建根节点<log>
                 log_xml.createNewFile();
                 document = DocumentHelper.createDocument();
@@ -95,7 +98,8 @@ public class ActionProxy implements MethodInterceptor {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            writeLog(document,log_xml);
+//            writeLog(document,log_xml);
+            XmlUtils.writeXML(document,log_xml);
         }
         return result_str;
     }
@@ -106,22 +110,5 @@ public class ActionProxy implements MethodInterceptor {
            Element result = action.addElement(key);
            result.setText(element_map.get(key));
        }
-    }
-
-    /**
-     * 记录日志到log_xml文件
-     * @param document
-     * @param log_xml
-     */
-    private void writeLog(Document document, File log_xml) {
-        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
-        outputFormat.setEncoding("UTF-8");
-        try {
-            XMLWriter writer = new XMLWriter(new FileWriter(log_xml),outputFormat);
-            writer.write(document);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

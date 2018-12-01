@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class UserDaoImpl implements UserDao {
 
-    private ConversationTemplete conversationTemplete = new ConversationTemplete();
+    private ConversationTemplete conversationTemplete;
 
     public void setConversationTemplete(ConversationTemplete conversationTemplete) {
         this.conversationTemplete = conversationTemplete;
