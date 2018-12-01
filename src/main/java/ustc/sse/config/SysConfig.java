@@ -11,12 +11,15 @@ import java.util.Properties;
  * @description God Bless, No Bug!
  */
 public class SysConfig {
-    private static Properties sys_config = new Properties();
+    private static Properties sys_config = null;
 
     public static Properties getSysConfig(){
         try {
-            sys_config.load(Thread.currentThread().getContextClassLoader()
-            .getResourceAsStream("/config.properties"));
+            if (sys_config == null){
+                sys_config = new Properties();
+                sys_config.load(Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream("/config.properties"));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
