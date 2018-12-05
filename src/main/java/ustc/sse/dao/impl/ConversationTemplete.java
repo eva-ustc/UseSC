@@ -2,8 +2,8 @@ package ustc.sse.dao.impl;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
-import ustc.sse.dao.Configuration;
 import ustc.sse.dao.Conversation;
+import ustc.sse.dao.orconfig.IConfiguration;
 import ustc.sse.domain.User;
 import ustc.sse.proxy.UserProxy;
 import utils.DBCPUtils;
@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class ConversationTemplete implements Conversation {
 
-    private Configuration configuration;
+    private IConfiguration configuration;
 
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(IConfiguration configuration) {
         this.configuration = configuration;
     }
 

@@ -1,9 +1,10 @@
-package ustc.sse.dao;
+package ustc.sse.dao.orconfig;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import ustc.sse.config.SysConfig;
+import ustc.sse.dao.orconfig.IConfiguration;
 import utils.SCConstant;
 
 import java.io.FileInputStream;
@@ -19,7 +20,7 @@ import java.util.Map;
  * @description God Bless, No Bug!
  *      解析or_mapper.xml映射文件
  */
-public class Configuration {
+public class Configuration implements IConfiguration{
     private static Map<String,Map<String,String>> table = null;
 
     public static Map<String,Map<String,String>> getTable(){

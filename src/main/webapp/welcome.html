@@ -3,12 +3,26 @@
 <head>
 	<meta charset="UTF-8">
 	<title>欢迎来到eva世界</title>
+	<script type="text/javascript">
+		function register(){
+		    var form = document.getElementById("form");
+		    form.setAttribute("action","register.test");
+		    form.submit();
+		}
+	</script>
 </head>
 <body>
 
-	<div align="center">
-		<h1>欢迎你啊~程序猿!</h1>
-		<img ali src="http://image.uc.cn/o/wemedia/s/upload/2018/021894fa608c50296d9af65c3965128dx644x762x51.jpeg;,3,jpegx;3,700x.jpg">
-	</div>
+<div align="center">
+	<h1>欢迎你啊~程序猿!</h1>
+	<form id="form" action="login.test">
+		<h2>登陆</h2>
+		用户名：<input type="text" name="username"><br/>
+		密码：<input type="password" name="password"><br/>
+		<input type="submit" value="登陆">
+		<button onclick="register(); return false;">注册</button><br/>
+	</form>
+	<img ali src="http://image.uc.cn/o/wemedia/s/upload/2018/021894fa608c50296d9af65c3965128dx644x762x51.jpeg;,3,jpegx;3,700x.jpg">
+</div>
 </body>
 </html>

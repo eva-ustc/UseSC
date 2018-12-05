@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 import ustc.sse.action.UserAction;
 import ustc.sse.dao.UserDao;
+import ustc.sse.dao.orconfig.Configuration2;
+import ustc.sse.dao.orconfig.MapperClass;
 import ustc.sse.ioc.ApplicationContext;
 import ustc.sse.service.UserService;
 import utils.XmlUtils;
@@ -32,5 +34,10 @@ public class BeanFactoryTest {
     public void testSubString(){
         String str = "ustc.sse.Action";
         System.out.println(str.substring(str.lastIndexOf(".")+1));
+    }
+    @Test
+    public void testOrMapping(){
+        MapperClass mapperClass = Configuration2.getMapperClass();
+        System.out.println(mapperClass);
     }
 }

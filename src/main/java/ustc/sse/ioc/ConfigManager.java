@@ -21,8 +21,8 @@ import java.util.Map;
  */
 public class ConfigManager {
 
-    private static Map<String,Bean> map = new HashMap<>();
-
+//    private static Map<String,Bean> map = new HashMap<>();
+    private static Map<String,Bean> map;
     /**
      * 读取配置文件并返回读取结果
      * 返回Map集合方便注入,key是每个bean的id
@@ -30,47 +30,49 @@ public class ConfigManager {
      * @return
      */
     public static Map<String,Bean> getConfig(String path){
+        if (map == null){
+            map = new HashMap<>();
+            // 解析xml配置文件
+            SAXReader reader = new SAXReader();
+            InputStream config_is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+            Document document = null;
+            try {
+                document = reader.read(config_is);
+                Element root = document.getRootElement();
+                List<Element> beanList = root.elements("bean");
+                if (beanList != null) {
+                    for (Element bean_element : beanList){
+                        Bean bean = new Bean();
+                        String id = bean_element.attributeValue("id");
+                        String className = bean_element.attributeValue("class");
+                        String singleton = bean_element.attributeValue("singleton")==null
+                                ?"true":bean_element.attributeValue("singleton");
+                        bean.setId(id);
+                        bean.setClassName(className);
+                        bean.setSingleton(singleton);
 
-        // 解析xml配置文件
-        SAXReader reader = new SAXReader();
-        InputStream config_is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-        Document document = null;
-        try {
-            document = reader.read(config_is);
-            Element root = document.getRootElement();
-            List<Element> beanList = root.elements("bean");
-            if (beanList != null) {
-                for (Element bean_element : beanList){
-                    Bean bean = new Bean();
-                    String id = bean_element.attributeValue("id");
-                    String className = bean_element.attributeValue("class");
-                    String singleton = bean_element.attributeValue("singleton")==null
-                            ?"true":bean_element.attributeValue("singleton");
-                    bean.setId(id);
-                    bean.setClassName(className);
-                    bean.setSingleton(singleton);
+                        List<Element> properties_element = bean_element.elements("property");
+                        if (properties_element != null) {
+                            List<Property> propertyList = new ArrayList<>();
+                            for (Element property_element : properties_element){
+                                Property property = new Property();
+                                String pName = property_element.attributeValue("name");
+                                String pValue = property_element.attributeValue("value");
+                                String pRef = property_element.attributeValue("bean-ref");
+                                property.setName(pName);
+                                property.setValue(pValue);
+                                property.setBean_ref(pRef);
 
-                    List<Element> properties_element = bean_element.elements("property");
-                    if (properties_element != null) {
-                        List<Property> propertyList = new ArrayList<>();
-                        for (Element property_element : properties_element){
-                            Property property = new Property();
-                            String pName = property_element.attributeValue("name");
-                            String pValue = property_element.attributeValue("value");
-                            String pRef = property_element.attributeValue("bean-ref");
-                            property.setName(pName);
-                            property.setValue(pValue);
-                            property.setBean_ref(pRef);
-
-                            propertyList.add(property);
+                                propertyList.add(property);
+                            }
+                            bean.setProperties(propertyList);
                         }
-                        bean.setProperties(propertyList);
+                        map.put(id,bean);
                     }
-                    map.put(id,bean);
                 }
+            } catch (DocumentException e) {
+                e.printStackTrace();
             }
-        } catch (DocumentException e) {
-            e.printStackTrace();
         }
         return  map;
     }

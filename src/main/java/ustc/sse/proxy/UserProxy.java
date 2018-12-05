@@ -1,9 +1,10 @@
 package ustc.sse.proxy;
 
 import net.sf.cglib.proxy.*;
-import ustc.sse.dao.Configuration;
 import ustc.sse.dao.impl.ConversationTemplete;
+import ustc.sse.dao.orconfig.IConfiguration;
 import ustc.sse.domain.User;
+import ustc.sse.ioc.ApplicationContext;
 import utils.CommonUtils;
 
 import java.lang.reflect.Method;
@@ -17,14 +18,19 @@ import java.lang.reflect.Method;
  *      User动态代理类
  */
 public class UserProxy implements MethodInterceptor {
-
-    private ConversationTemplete conversationTemplete;
+    ApplicationContext context = new ApplicationContext("/applicationContext.xml");
+    private ConversationTemplete conversationTemplete = (ConversationTemplete) context.getBean("conversationTemplete");
 
     public void setConversationTemplete(ConversationTemplete conversationTemplete) {
         this.conversationTemplete = conversationTemplete;
     }
 
-    private Configuration configuration = new Configuration();
+    private IConfiguration configuration = (IConfiguration) context.getBean("configuration");
+
+    public void setConfiguration(IConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     private Class target;
 
     public <P> P getProxy(Class<P> target) {

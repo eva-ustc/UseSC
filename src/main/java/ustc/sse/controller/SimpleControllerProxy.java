@@ -3,10 +3,13 @@ package ustc.sse.controller;
 import org.dom4j.Element;
 import ustc.sse.config.SysConfig;
 import ustc.sse.domain.User;
+import ustc.sse.interceptor.InterceptorContext;
+import ustc.sse.interceptor.Interface4Interceptor;
 import ustc.sse.ioc.ApplicationContext;
 import ustc.sse.ioc.Bean;
 import ustc.sse.ioc.ConfigManager;
 import ustc.sse.proxy.ActionProxy;
+import ustc.sse.proxy.UserProxy;
 import utils.SCConstant;
 import utils.XmlUtils;
 
@@ -32,11 +35,15 @@ import java.util.Objects;
  */
 public class SimpleControllerProxy extends HttpServlet {
     private static final String ERROR_PAGE = "pages/error.jsp";
+    private static final String PRE_EXECUTION = "predo";
+    private static final String AFTER_EXECUTION = "afterdo";
 
     private String action_name;
     private File controller_xml;
     private List<String> actionNames;
     private boolean hasAction;
+    private boolean hasInterceptor;
+    private String interceptor_name;
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
@@ -44,8 +51,25 @@ public class SimpleControllerProxy extends HttpServlet {
         for(String actionName : actionNames){ // 判断请求是否合法
             if (actionName.equals(action_name)){// 匹配成功 如:name=login,利用反射执行相应操作
                 hasAction =true;
+
+                // 执行拦截器方法
                 //  获取当前action节点
                 Element action_element = XmlUtils.getElementByAttr(controller_xml,"action","name",actionName);
+
+                // 判断是否存在interceptor-ref节点
+                List<Element> interceptor_ref_elements = action_element.elements("interceptor-ref");
+
+                if (interceptor_ref_elements !=null){
+                    hasInterceptor = true;
+                    for(Element interceptor_ref_element : interceptor_ref_elements){
+
+                        interceptor_name = interceptor_ref_element.attribute("name").getText();
+                        doInterceptor(interceptor_name,PRE_EXECUTION);
+                    }
+                }
+
+                //  反射执行相应操作
+
                 // 获取类名和方法名 如 ustc.sse.action.LoginACtion 和 handleLogin
                 String class_name = XmlUtils.getAttrValueByName(action_element,"class");
                 String method_name = XmlUtils.getAttrValueByName(action_element,"method");
@@ -77,6 +101,7 @@ public class SimpleControllerProxy extends HttpServlet {
                     }
 
                     ActionProxy actionProxy = new ActionProxy();
+//                    UserProxy actionProxy = new UserProxy();
                     Object proxy = actionProxy.getProxy(target);
 
                     User user = encapsulateParaUser(req);
@@ -87,6 +112,14 @@ public class SimpleControllerProxy extends HttpServlet {
                     String result = (String) method.invoke(proxy,action_name,user,req);
                     // 根据方法的返回值,查询次action下的result节点的name属性 跳转/重定向
                     handleResult(action_element,result,method_name,req,resp);
+
+                    if (hasInterceptor){
+                        for(Element interceptor_ref_element : interceptor_ref_elements){
+
+                            interceptor_name = interceptor_ref_element.attribute("name").getText();
+                            doInterceptor(interceptor_name,AFTER_EXECUTION);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -95,6 +128,26 @@ public class SimpleControllerProxy extends HttpServlet {
         }
         if (!hasAction) { // 没有匹配请求的方法
             resp.sendRedirect(ERROR_PAGE);
+        }
+    }
+
+    private void doInterceptor(String interceptor_name, String execution_order) {
+        System.out.println("doInterceptor "+interceptor_name+" "+execution_order);
+        InterceptorContext interceptorContext = new InterceptorContext(SysConfig.getSysConfig()
+        .getProperty(SCConstant.CONTROLLER_LOCATION));
+        Object obj = interceptorContext.getInterceptor(interceptor_name);
+        if (obj instanceof Interface4Interceptor){
+            Interface4Interceptor interceptor = (Interface4Interceptor) obj;
+            switch (execution_order){
+                case PRE_EXECUTION:
+                    interceptor.preAction();
+                    break;
+                case AFTER_EXECUTION:
+                    interceptor.afterAction();
+                    break;
+                    default:System.out.println("没有匹配的方法...");
+
+            }
         }
     }
 

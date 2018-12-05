@@ -12,10 +12,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,5 +204,40 @@ public class XmlUtils {
         }
     }
 
+    /**
+     * 获取指定标签名的所有节点
+     * @param is
+     * @param eleName
+     * @return
+     */
+    public static List<Element> getElementsByName(InputStream is, String eleName){
+        SAXReader reader = new SAXReader();
+        Document document = null;
+        try {
+            document = reader.read(is);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        Element root = document.getRootElement();
+        return  root.elements(eleName);
+    }
+
+    /**
+     * 获取一个指定标签名的元素
+     * @param is
+     * @param eleName
+     * @return
+     */
+    public static Element getElementByName(InputStream is, String eleName){
+        SAXReader reader = new SAXReader();
+        Document document = null;
+        try {
+            document = reader.read(is);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        Element root = document.getRootElement();
+        return  root.element(eleName);
+    }
 
 }

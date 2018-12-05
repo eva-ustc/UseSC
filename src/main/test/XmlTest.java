@@ -4,7 +4,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.jupiter.api.Test;
 import ustc.sse.dao.impl.ConversationTemplete;
+import ustc.sse.dao.orconfig.Configuration2;
 import ustc.sse.domain.User;
+import ustc.sse.ioc.ApplicationContext;
 import ustc.sse.proxy.UserProxy;
 import utils.DBCPUtils;
 import utils.XmlUtils;
@@ -146,7 +148,11 @@ public class XmlTest {
 
     @Test
     public void testLoadUserById(){ // 懒加载测试
+//        ApplicationContext context = new ApplicationContext("/applicationContext.xml");
+//        ConversationTemplete conversationTemplete = (ConversationTemplete) context.getBean("conversationTemplete");
         ConversationTemplete conversationTemplete = new ConversationTemplete();
+        Configuration2 configuration2 = new Configuration2();
+        conversationTemplete.setConfiguration(configuration2);
         User user = conversationTemplete.loadUserById(4);
 
         System.out.println("=============");

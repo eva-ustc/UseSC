@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sc-di>
-    <bean id="configuration" class="ustc.sse.dao.Configuration"/>
+    <!--<bean id="configuration" class="ustc.sse.dao.orconfig.Configuration"/>-->
+    <bean id="configuration" class="ustc.sse.dao.orconfig.Configuration2"/>
     <bean id="conversationTemplete" class="ustc.sse.dao.impl.ConversationTemplete">
         <property name="configuration" bean-ref="configuration"/>
     </bean>
