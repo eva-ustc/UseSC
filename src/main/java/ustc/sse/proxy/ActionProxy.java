@@ -31,6 +31,7 @@ import java.util.Map;
  * @package_name ustc.sse.proxy
  * @date 2018/11/27 22:29
  * @description God Bless, No Bug!
+ *      动作类代理,完成日志记录等功能
  */
 public class ActionProxy implements MethodInterceptor {
 
@@ -61,7 +62,7 @@ public class ActionProxy implements MethodInterceptor {
 
 //            log_xml = new File(XmlUtils.config_prop.getProperty("log_location"));
             // 读取配置文件中的日志保存位置信息,按照日期分类
-            log_xml = new File(SysConfig.getSysConfig().getProperty("log_location")+"log_"+
+            log_xml = new File(SysConfig.getSysConfig().getProperty(SCConstant.LOG_LOCATION)+"log_"+
                 new SimpleDateFormat("yyyy_MM_dd").format(new Date()).toString()+".xml");
             if (!log_xml.exists()){ // 如果不存在该目录则创建并初始化log_xml 创建根节点<log>
                 log_xml.createNewFile();

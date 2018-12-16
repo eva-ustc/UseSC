@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,5 +20,5 @@ public class MapperClass {
     private String tableName;
     private String idName;
     private String idColumn;
-    private List<MapperProperty> propertyList;
+    private List<MapperProperty> propertyList = new ArrayList<>();
 }

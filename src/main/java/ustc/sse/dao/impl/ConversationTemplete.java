@@ -163,6 +163,12 @@ public class ConversationTemplete implements Conversation {
         String sql = MessageFormat.format("select * from {0}",table_name);
         try {
             conn = DBCPUtils.getConnection();
+            // 测试懒加载
+
+            User u = loadUserById(1);
+            System.out.println(u);
+            System.out.println(u.getUserPass());
+            System.out.println(u);
             return queryRunner.query(conn,sql,new UserListHandler());
         } catch (SQLException e) {
             e.printStackTrace();

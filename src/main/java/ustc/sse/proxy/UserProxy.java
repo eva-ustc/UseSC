@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @package_name ustc.sse.proxy
  * @date 2018/11/29 20:19
  * @description God Bless, No Bug!
- *      User动态代理类
+ *      User动态代理类,实现懒加载
  */
 public class UserProxy implements MethodInterceptor {
     ApplicationContext context = new ApplicationContext("/applicationContext.xml");

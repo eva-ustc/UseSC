@@ -42,7 +42,7 @@ public class SimpleControllerProxy extends HttpServlet {
     private File controller_xml;
     private List<String> actionNames;
     private boolean hasAction;
-    private boolean hasInterceptor;
+    private boolean hasInterceptor = false;
     private String interceptor_name;
 
     @Override
@@ -90,7 +90,7 @@ public class SimpleControllerProxy extends HttpServlet {
                         target = clazz.newInstance();
                     }else {
                         // 如果找到了指定bean节点,查看该节点是否有属性依赖其他bean节点
-                        // 如果无依赖,直接通过反射构造该bean实例,并风发请求
+                        // 如果无依赖,直接通过反射构造该bean实例,并分发请求
                         // 如果有属性依赖,反射先构造被依赖属性(如 userDao)的实例,之后再构造依赖(如 userService)
                         // 依赖注入 setter方法,并分发请求 在手写ioc包中实现
 //                        ApplicationContext context = new ApplicationContext("/applicationContext.xml");

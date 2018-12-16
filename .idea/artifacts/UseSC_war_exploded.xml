@@ -18,6 +18,7 @@
           <element id="library" level="project" name="Maven: org.attoparser:attoparser:2.0.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.unbescape:unbescape:1.1.5.RELEASE" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+          <element id="library" level="project" name="Maven: org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.1.RELEASE" />
           <element id="library" level="project" name="Maven: ustc.sse:simple-controller:1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: org.apache.struts:struts2-core:2.5.16" />
           <element id="library" level="project" name="Maven: org.freemarker:freemarker:2.3.26-incubating" />

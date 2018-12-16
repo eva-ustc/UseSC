@@ -2,6 +2,7 @@ package ustc.sse.dao.orconfig;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author LRK
@@ -10,7 +11,7 @@ import lombok.Setter;
  * @date 2018/12/5 22:55
  * @description God Bless, No Bug!
  */
-@Setter@Getter
+@Setter@Getter@ToString
 public class MapperProperty {
     private String propName;
     private String propColumn;

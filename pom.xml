@@ -43,6 +43,12 @@
       <artifactId>thymeleaf</artifactId>
       <version>3.0.9.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-java8time</artifactId>
+      <version>3.0.1.RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
     <!--添加servlet-api依赖-->
     <dependency>
       <groupId>javax.servlet</groupId>

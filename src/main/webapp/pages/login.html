@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Signin Template for Bootstrap</title>
+		<!-- Bootstrap core CSS
+		href="asserts/css/bootstrap.min.css"
+		 href="asserts/css/signin.css"-->
+		<link  href="webjars/bootstrap/4.1.3/css/bootstrap.css" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link  href="static/asserts/css/signin.css" rel="stylesheet">
+		<script type="text/javascript">
+			function register() {
+				var form = document.getElementById("form");
+				form.setAttribute("action","register.test");
+				form.submit();
+            }
+		</script>
+	</head>
+
+	<body class="text-center">
+		<form id="form" class="form-signin" action="login.test"  method="post">
+			<img class="mb-4" src="static/asserts/img/ustc.jpg" alt="" width="72" height="72">
+			<h1 class="h3 mb-3 font-weight-normal" >Please sign in</h1>
+			<label class="sr-only" >Username</label>
+			<input type="text" name="username" class="form-control" placeholder="Username"  required="" autofocus="">
+			<label class="sr-only" >Password</label>
+			<input type="password" name="password" class="form-control" placeholder="Password" required="">
+			<div class="checkbox mb-3">
+				<label>
+				  <input type="checkbox" value="remember-me">Remember password
+				</label>
+			</div>
+			<button class="btn btn-lg btn-link" onclick="register();return false;">Sign up</button>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+			<p class="mt-5 mb-3 text-muted">© 2017-2018</p>
+			<a class="btn btn-sm" th:href="@{/index.html(l='zh_CN')}">中文</a>
+			<a class="btn btn-sm" th:href="@{/index.html(l='en_US')}">English</a>
+		</form>
+
+	</body>
+
+</html>
